@@ -1,6 +1,8 @@
 import fs from 'fs'
 import path from 'path'
+import matter from 'gray-matter'
 import Head from 'next/head'
+import Post from '../components/Post'
 
 export default function Home({ posts }) {
   console.log(posts)
@@ -9,7 +11,11 @@ export default function Home({ posts }) {
       <Head>
         <title>State Blog Page</title>
       </Head>
-
+      <div className='posts'>
+        {posts.map((post, index) => (
+          <Post post={post}/>
+        ))}
+      </div>
 
     </div>
   )
@@ -26,19 +32,21 @@ export async function getStaticProps() {
 
     // get frontmatter
     const markdownWithMeta = fs.readFileSync(path.join('posts', filename), 'utf-8')
-    console.log(markdownWithMeta)
+
+    const { data: frontMatter } = matter(markdownWithMeta)
 
     return {
-      slug
+      slug,
+      frontMatter
     }
   })
 
-  console.log(files)
+  console.log(posts)
 
 
   return {
     props: {
-      posts: 'The Post'
+      posts: posts
     }
   }
 }
